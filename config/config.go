@@ -1,8 +1,8 @@
-package config
+package shcfg
 
 import (
-    "os"
-    "github.com/pelletier/go-toml/v2"
+	"github.com/pelletier/go-toml/v2"
+	"os"
 )
 
 type ShmapCfg struct {
@@ -17,18 +17,18 @@ func defaultConfig() *ShmapCfg {
 	return &result
 }
 
-func GetConfig() (*ShmapCfg) {
-    cfg := defaultConfig()
+func GetConfig() *ShmapCfg {
+	cfg := defaultConfig()
 
-    doc, err := os.ReadFile("shmap.toml")
-    if err != nil {
-        return cfg
-    }
+	doc, err := os.ReadFile("shmap.toml")
+	if err != nil {
+		return cfg
+	}
 
 	err = toml.Unmarshal([]byte(doc), cfg)
 	if err != nil {
 		return cfg
 	}
 
-    return cfg
+	return cfg
 }
