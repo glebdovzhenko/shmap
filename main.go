@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"os"
+    "os"
 
-	tea "github.com/charmbracelet/bubbletea"
+    tea "github.com/charmbracelet/bubbletea"
 	"github.com/glebdovzhenko/shmap/config"
 	shdb "github.com/glebdovzhenko/shmap/database"
-	"github.com/glebdovzhenko/shmap/tui"
+    "github.com/glebdovzhenko/shmap/tui"
 )
 
 func main() {
@@ -17,17 +17,19 @@ func main() {
 		"%s %d.%d.%d\n", app_config.Name,
 		app_config.Version[0], app_config.Version[1], app_config.Version[2],
 	)
-
-	// loading database
+    
+    // loading database
     //shdb.DefaultPopulate()
-	column_names, row_data := shdb.GetTable("students")
+    tables_data := shdb.GetDBData()
+    fmt.Printf("%v",  tables_data)
 
-	// prepping and launching TUI
-	m := tui.InitTuiModel()
-	m = tui.InitTuiModelTable(m, &column_names, &row_data)
 
-	if _, err := tea.NewProgram(*m).Run(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
-	}
+    // prepping and launching TUI
+    m := tui.InitTuiModel()
+    m = tui.InitTuiModelTable(m, &(*tables_data)[1])
+
+    if _, err := tea.NewProgram(*m).Run(); err != nil {
+        fmt.Println("Error running program:", err)
+        os.Exit(1)
+    }
 }

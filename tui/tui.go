@@ -4,6 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	shdb "github.com/glebdovzhenko/shmap/database"
 )
 
 var baseStyle = lipgloss.NewStyle().
@@ -47,16 +48,16 @@ func InitTuiModel() *TuiModel {
 	return &TuiModel{}
 }
 
-func InitTuiModelTable(md *TuiModel, column_names *[]string, row_data *[][]string) *TuiModel {
+func InitTuiModelTable(md *TuiModel, tb * shdb.DBTableData) *TuiModel {
 
 	var columns []table.Column
-	for _, cn := range *column_names {
+	for _, cn := range tb.ColumnNames {
 		columns = append(columns, table.Column{Title: cn, Width: 10})
 	}
 
 	var rows []table.Row
-	for ii, _ := range *row_data {
-		rows = append(rows, (*row_data)[ii])
+	for ii, _ := range tb.Rows {
+		rows = append(rows, tb.Rows[ii])
 	}
 
 	t := table.New(

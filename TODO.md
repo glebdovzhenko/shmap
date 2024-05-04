@@ -5,5 +5,6 @@
 - [x] Show the read table on screen using bubbletea
 - [x] Refactor the tea table generation code
 - [x] Make a better default DB with multiple tables
-- [ ] Read multiple tables from DB
+- [x] Read multiple tables from DB
+- [ ] Figure out what should be passed by value and what by pointer in my database UI
 - [ ] Show multiple tables via tabs in UI
