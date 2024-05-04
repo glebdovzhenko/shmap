@@ -19,8 +19,8 @@ func main() {
 	)
 
 	// loading database
-	//shdb.DefaultPopulate()
-	column_names, row_data := shdb.GetTable("folders")
+    //shdb.DefaultPopulate()
+	column_names, row_data := shdb.GetTable("students")
 	fmt.Printf("%v\n%v\n", column_names, row_data)
 
 	// prepping and launching TUI
