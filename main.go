@@ -8,17 +8,16 @@ import (
 )
 
 func main() {
+    // loading population
 	app_config := shcfg.GetConfig()
 	fmt.Printf(
 		"%s %d.%d.%d\n", app_config.Name,
 		app_config.Version[0], app_config.Version[1], app_config.Version[2],
 	)
 
+    // loading database
     shdb.DefaultPopulate()
-    shdb.GetTable("folders") 
-    //rows, err := app_db.Query("SELECT * FROM folders")
-    //if err != nil{
-    //    panic(err)
-    //}
-    //fmt.Print("%v", rows)
+    cns, rs := shdb.GetTable("folders")
+    fmt.Printf("%v\n%v\n", cns, rs)
+
 }
