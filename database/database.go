@@ -71,9 +71,9 @@ func GetTable(t_name string) ([]string, [][]string) {
 
 	// initializing row_data
 	var row_data [][]string
-    
-    // writing row_data from sql object
-    // TODO: is there a better way?
+
+	// writing row_data from sql object
+	// TODO: is there a better way?
 	for rows.Next() {
 		pointers := make([]interface{}, len(column_names))
 		container := make([]string, len(column_names))

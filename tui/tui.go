@@ -43,3 +43,42 @@ func (m TuiModel) View() string {
 	return baseStyle.Render(m.Table.View()) + "\n"
 }
 
+func InitTuiModel() *TuiModel {
+	return &TuiModel{}
+}
+
+func InitTuiModelTable(md *TuiModel, column_names *[]string, row_data *[][]string) *TuiModel {
+
+	var columns []table.Column
+	for _, cn := range *column_names {
+		columns = append(columns, table.Column{Title: cn, Width: 10})
+	}
+
+	var rows []table.Row
+	for ii, _ := range *row_data {
+		rows = append(rows, (*row_data)[ii])
+	}
+
+	t := table.New(
+		table.WithColumns(columns),
+		table.WithRows(rows),
+		table.WithFocused(true),
+		table.WithHeight(7),
+	)
+
+	s := table.DefaultStyles()
+	s.Header = s.Header.
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(lipgloss.Color("240")).
+		BorderBottom(true).
+		Bold(false)
+	s.Selected = s.Selected.
+		Foreground(lipgloss.Color("229")).
+		Background(lipgloss.Color("57")).
+		Bold(false)
+	t.SetStyles(s)
+
+	md.Table = t
+
+	return md
+}
