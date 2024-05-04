@@ -99,7 +99,6 @@ func GetTable(t_name string) ([]string, [][]string) {
 	var column_names []string
 	for _, ct := range cts {
 		column_names = append(column_names, ct.Name())
-		fmt.Printf("%v\n", ct.ScanType())
 	}
 
 	// initializing row_data
