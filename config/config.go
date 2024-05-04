@@ -6,8 +6,10 @@ import (
 )
 
 type ShmapCfg struct {
-	Version []int
-	Name    string
+	Version []int  // 3-integer version
+	Name    string // should be SHMAP or something
+	DBLoc   string // Location of the database file
+	DBType  string // Is passed to sql.Open as driver
 }
 
 func defaultConfig() *ShmapCfg {
@@ -20,7 +22,7 @@ func defaultConfig() *ShmapCfg {
 func GetConfig() *ShmapCfg {
 	cfg := defaultConfig()
 
-	doc, err := os.ReadFile("shmap.toml")
+	doc, err := os.ReadFile("./.appdata/shmap.toml")
 	if err != nil {
 		return cfg
 	}
