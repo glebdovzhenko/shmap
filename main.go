@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+    "fmt"
     "os"
 
     tea "github.com/charmbracelet/bubbletea"
@@ -13,7 +13,7 @@ import (
 func main() {
 	// loading config
 	app_config := shcfg.GetConfig()
-	fmt.Printf(
+	tea.Printf(
 		"%s %d.%d.%d\n", app_config.Name,
 		app_config.Version[0], app_config.Version[1], app_config.Version[2],
 	)
@@ -21,8 +21,6 @@ func main() {
     // loading database
     //shdb.DefaultPopulate()
     tables_data := shdb.GetDBData()
-    fmt.Printf("%v",  tables_data)
-
 
     // prepping and launching TUI
     m := tui.InitTuiModel()
