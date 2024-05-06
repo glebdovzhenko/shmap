@@ -38,7 +38,7 @@ func InitTuiModelTable(md *TuiModel, tb *shdb.DBTableData) *TuiModel {
 		table.WithColumns(columns),
 		table.WithRows(rows),
 		table.WithFocused(true),
-		table.WithHeight(7),
+		//table.WithHeight(20),
 	)
 
 	s := table.DefaultStyles()

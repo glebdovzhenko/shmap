@@ -22,10 +22,12 @@ func main() {
     //shdb.DefaultPopulate()
     tables_data := shdb.GetDBData()
 
-    // prepping and launching TUI
+    // prepping TUI
     m := tui.InitTuiModel()
+    m = tui.InitTuiModelList(m, tables_data)
     m = tui.InitTuiModelTable(m, &(*tables_data)[1])
-
+    
+    // launching TUI
     if _, err := tea.NewProgram(*m).Run(); err != nil {
         fmt.Println("Error running program:", err)
         os.Exit(1)
