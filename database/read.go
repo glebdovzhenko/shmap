@@ -1,3 +1,6 @@
+// shdb package provides an inteface for 
+// 1. Initializing a dummy database
+// 2. Reading from the database.
 package shdb
 
 import (
@@ -10,11 +13,11 @@ import (
 
 type DBTableData struct {
 	Name        string
-	ColumnNames []string
-	Rows        [][]string
+	ColumnNames *[]string
+	Rows        *[][]string
 }
 
-func GetTable(t_name string) ([]string, [][]string) {
+func getTable(t_name string) (*[]string, *[][]string) {
 	app_cfg := shcfg.GetConfig()
 
 	// opening DB
@@ -59,10 +62,10 @@ func GetTable(t_name string) ([]string, [][]string) {
 		row_data = append(row_data, container)
 	}
 
-	return column_names, row_data
+	return &column_names, &row_data
 }
 
-func GetTablesNames() []string{
+func getTablesNames() *[]string{
 	app_cfg := shcfg.GetConfig()
 
 	// opening DB
@@ -86,15 +89,15 @@ func GetTablesNames() []string{
 		tb_names = append(tb_names, *pt)
 	}
 
-    return tb_names
+    return &tb_names
 }
 
 func GetDBData() *[]DBTableData {
-    tb_names := GetTablesNames()
+    tb_names := getTablesNames()
     var result []DBTableData
     
-    for _, tb_name := range tb_names {
-        cs, rs := GetTable(tb_name)
+    for _, tb_name := range *tb_names {
+        cs, rs := getTable(tb_name)
         result = append(result, DBTableData{Name: tb_name, ColumnNames: cs, Rows: rs})
     }
 

@@ -51,13 +51,13 @@ func InitTuiModel() *TuiModel {
 func InitTuiModelTable(md *TuiModel, tb * shdb.DBTableData) *TuiModel {
 
 	var columns []table.Column
-	for _, cn := range tb.ColumnNames {
+	for _, cn := range *tb.ColumnNames {
 		columns = append(columns, table.Column{Title: cn, Width: 10})
 	}
 
 	var rows []table.Row
-	for ii, _ := range tb.Rows {
-		rows = append(rows, tb.Rows[ii])
+	for ii, _ := range *tb.Rows {
+		rows = append(rows, (*tb.Rows)[ii])
 	}
 
 	t := table.New(
