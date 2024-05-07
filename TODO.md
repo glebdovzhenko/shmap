@@ -8,11 +8,13 @@
 - [x] Read multiple tables from DB
 - [ ] Figure out what should be passed by value and what by pointer in my database UI
 - [ ] ~~Show multiple tables via tabs in UI~~
-- [x] Show multiple tables via a list on the left
+- - [x] Show multiple tables via a list on the left
 - [x] Add a text box for commands
-- [ ] Fix DB path according to XDG as in [taskcli](https://github.com/charmbracelet/taskcli)
+- [ ] ~~Fix DB path according to XDG as in [taskcli](https://github.com/charmbracelet/taskcli)~~
+- - [x] Put configuration directory in $XDG_CONFIG_PATH / $HOME same as [NeoVIM](https://wiki.archlinux.org/title/Neovim#:~:text=%7C%7C%20fvimAUR-,Configuration,config%2Fnvim%2Finit.)
 - [ ] Find a more compact list styling
 - [ ] Text edit should accept q button press and not quit
 - [ ] Change table view on list selection + enter
 - [ ] Refactor: move all widget styling from constructors to `styles.go`
 - [ ] Add logging
+- [ ] Fix that every time GetConfig() is called, the config file is loaded

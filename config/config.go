@@ -1,28 +1,80 @@
 package shcfg
 
 import (
-	"github.com/pelletier/go-toml/v2"
+	//"fmt"
+	//"fmt"
 	"os"
+	"path/filepath"
+
+	"github.com/pelletier/go-toml/v2"
 )
 
 type ShmapCfg struct {
-	Version []int  // 3-integer version
-	Name    string // should be SHMAP or something
-	DBLoc   string // Location of the database file
-	DBType  string // Is passed to sql.Open as driver
+	ConfigPath string
+	Version    []int  // 3-integer version
+	Name       string // should be SHMAP or something
+	DBPath      string // Location of the database file
+	DBType     string // Is passed to sql.Open as driver
+}
+
+// I follow the neovim rule here:
+// If $XDG_CONFIG_HOME is set, then it is a dir $XDG_CONFIG_HOME/shmap
+// and by default $HOME/.config/shmap
+func setupPath() string {
+	// Checking XDG_CONFIG_HOME
+	xdg_home := os.Getenv("XDG_CONFIG_HOME")
+	if _, err := os.Stat(xdg_home); os.IsNotExist(err) {
+		xdg_home = ""
+	}
+
+	// Getting user home
+	user_home, err := os.UserHomeDir()
+	if err != nil {
+		user_home = ""
+	}
+    
+    if (len(user_home) == 0) && (len(xdg_home) == 0) {
+        panic("No place to put my files")
+    }
+    
+    // choosing one or the other
+    var shmap_path string
+    if len(xdg_home) != 0 {
+        shmap_path = filepath.Join(xdg_home, "shmap")
+    } else {
+        shmap_path = filepath.Join(user_home, ".config", "shmap")
+    }
+
+    err = os.MkdirAll(shmap_path, 0o770)
+    if err != nil{ 
+        panic(err)
+    }
+
+    return shmap_path
 }
 
 func defaultConfig() *ShmapCfg {
 	result := ShmapCfg{}
-	result.Version = []int{0, 0, 0}
-	result.Name = "DEFAULT"
+
+	result.ConfigPath = setupPath()
+	result.Version = []int{0, 0, 1}
+	result.Name = "SHMAP!"
+    result.DBType = "sqlite3"
+    result.DBPath = filepath.Join(result.ConfigPath, "shmap.db")
 	return &result
 }
 
 func GetConfig() *ShmapCfg {
 	cfg := defaultConfig()
+    
+    config_path := filepath.Join(cfg.ConfigPath, "shmap.toml")
+    if _, err := os.Stat(config_path); os.IsNotExist(err) {
+        b, _ := toml.Marshal(cfg)
+        os.WriteFile(config_path, b, 0o770)
+        return cfg
+	}
 
-	doc, err := os.ReadFile("./.appdata/shmap.toml")
+	doc, err := os.ReadFile(config_path)
 	if err != nil {
 		return cfg
 	}

@@ -6,6 +6,7 @@ package shdb
 import (
 	"database/sql"
 	"fmt"
+    "os"
 
 	shcfg "github.com/glebdovzhenko/shmap/config"
 	_ "github.com/mattn/go-sqlite3"
@@ -21,7 +22,7 @@ func getTable(t_name string) (*[]string, *[][]string) {
 	app_cfg := shcfg.GetConfig()
 
 	// opening DB
-	db, err := sql.Open(app_cfg.DBType, app_cfg.DBLoc)
+	db, err := sql.Open(app_cfg.DBType, app_cfg.DBPath)
 	if err != nil {
 		panic(err)
 	}
@@ -69,7 +70,7 @@ func getTablesNames() *[]string{
 	app_cfg := shcfg.GetConfig()
 
 	// opening DB
-	db, err := sql.Open(app_cfg.DBType, app_cfg.DBLoc)
+	db, err := sql.Open(app_cfg.DBType, app_cfg.DBPath)
 	if err != nil {
 		panic(err)
 	}
@@ -92,7 +93,24 @@ func getTablesNames() *[]string{
     return &tb_names
 }
 
+func setupDB() {
+    app_cfg := shcfg.GetConfig()
+    
+    if _, err := os.Stat(app_cfg.DBPath); os.IsNotExist(err) {
+		defaultPopulate()
+	}
+
+	db, err := sql.Open(app_cfg.DBType, app_cfg.DBPath)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+}
+
+
 func GetDBData() *[]DBTableData {
+    setupDB()
+
     tb_names := getTablesNames()
     var result []DBTableData
     

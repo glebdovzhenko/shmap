@@ -9,7 +9,7 @@ import (
 )
 
 // Is it obvious this is the first time I'm writing SQL?
-func DefaultPopulate() {
+func defaultPopulate() {
 	populateFolders()
 	populateStudents()
 }
@@ -17,7 +17,7 @@ func DefaultPopulate() {
 func populateFolders() {
 	app_cfg := shcfg.GetConfig()
 
-	db, err := sql.Open(app_cfg.DBType, app_cfg.DBLoc)
+	db, err := sql.Open(app_cfg.DBType, app_cfg.DBPath)
 	if err != nil {
 		panic(err)
 	}
@@ -41,7 +41,7 @@ func populateFolders() {
 func populateStudents() {
 	app_cfg := shcfg.GetConfig()
 
-	db, err := sql.Open(app_cfg.DBType, app_cfg.DBLoc)
+	db, err := sql.Open(app_cfg.DBType, app_cfg.DBPath)
 	if err != nil {
 		panic(err)
 	}

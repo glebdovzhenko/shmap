@@ -1,4 +1,0 @@
-name = "SHMAP!"
-version = [0, 0, 1]
-dbloc = "./.appdata/default.db"
-dbtype = "sqlite3"
