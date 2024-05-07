@@ -19,7 +19,6 @@ func main() {
 	)
     
     // loading database
-    //shdb.DefaultPopulate()
     tables_data := shdb.GetDBData()
 
     // prepping TUI

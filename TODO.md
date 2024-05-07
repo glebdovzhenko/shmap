@@ -13,7 +13,7 @@
 - [ ] ~~Fix DB path according to XDG as in [taskcli](https://github.com/charmbracelet/taskcli)~~
 - - [x] Put configuration directory in $XDG_CONFIG_PATH / $HOME same as [NeoVIM](https://wiki.archlinux.org/title/Neovim#:~:text=%7C%7C%20fvimAUR-,Configuration,config%2Fnvim%2Finit.)
 - [ ] Find a more compact list styling
-- [ ] Text edit should accept q button press and not quit
+- [x] Text edit should accept `q` button press and not quit
 - [ ] Change table view on list selection + enter
 - [ ] Refactor: move all widget styling from constructors to `styles.go`
 - [ ] Add logging
