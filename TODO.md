@@ -8,5 +8,6 @@
 - [x] Read multiple tables from DB
 - [ ] Figure out what should be passed by value and what by pointer in my database UI
 - [ ] ~~Show multiple tables via tabs in UI~~
-- [ ] Show multiple tables via a list on the left
+- [x] Show multiple tables via a list on the left
+- [x] Add a text box for commands
 - [ ] Fix DB path according to XDG as in https://github.com/charmbracelet/taskcli

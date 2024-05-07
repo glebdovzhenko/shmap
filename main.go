@@ -26,7 +26,8 @@ func main() {
     m := tui.InitTuiModel()
     m = tui.InitTuiModelList(m, tables_data)
     m = tui.InitTuiModelTable(m, &(*tables_data)[1])
-    
+    m = tui.InitTuiModelTextInput(m)
+
     // launching TUI
     if _, err := tea.NewProgram(*m).Run(); err != nil {
         fmt.Println("Error running program:", err)
