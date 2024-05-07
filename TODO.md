@@ -11,3 +11,6 @@
 - [x] Show multiple tables via a list on the left
 - [x] Add a text box for commands
 - [ ] Fix DB path according to XDG as in https://github.com/charmbracelet/taskcli
+- [ ] Find a more compact list styling
+- [ ] Text edit should accept q button press and not quit
+- [ ] Change table view on list selection + enter
