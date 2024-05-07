@@ -14,3 +14,4 @@
 - [ ] Find a more compact list styling
 - [ ] Text edit should accept q button press and not quit
 - [ ] Change table view on list selection + enter
+- [ ] Refactor: move all widget styling from constructors to `styles.go`
