@@ -22,6 +22,7 @@
 - [ ] Figure out how focusing works and use it instead of my own switch
 ## Functionality
 - [x] Change table view on list selection + enter
+- [ ] Show in the list which table is currently selected
 - [ ] Add logging
 ## Other
 - [ ] Refactor: move all widget styling from constructors to `styles.go`
