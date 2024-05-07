@@ -1,4 +1,5 @@
 # To-do list:
+## Bootstrap
 - [x] Create a database
 - [x] Create a TOML config
 - [x] Read a table from the database
