@@ -35,7 +35,7 @@ func InitTuiModelList(md *TuiModel) *TuiModel {
 
 	items := make([]list.Item, len(*md.DBData))
 	for ii, table := range *md.DBData {
-		items[ii] = list.Item(item{title: table.Name, desc: fmt.Sprintf("%d columns %d rows", len(*table.Rows), len(*table.ColumnNames))})
+		items[ii] = list.Item(item{title: table.Name, desc: fmt.Sprintf("%d columns %d rows", len(*table.ColumnNames), len(*table.Rows))})
 	}
 
 	md.List = list.New(items, list.NewDefaultDelegate(), 20, 20)
