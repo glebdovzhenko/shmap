@@ -5,14 +5,19 @@ import (
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	shdb "github.com/glebdovzhenko/shmap/database"
+
 	"github.com/charmbracelet/lipgloss"
 )
 
 type TuiModel struct {
 	FocusOn FocusState
-	Table   table.Model
-	List    list.Model
-    TextInput   textinput.Model
+	DBData  *[]shdb.DBTableData
+    TableID uint
+
+	Table     table.Model
+	List      list.Model
+	TextInput textinput.Model
 }
 
 func (m TuiModel) Init() tea.Cmd { return textinput.Blink }
@@ -29,6 +34,11 @@ func (m TuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "shift+tab":
 			m.FocusOn, _ = prevFocusState(m.FocusOn)
 		}
+	case SwitchTableMsg:
+        m.TableID = uint(msg)
+        InitTuiModelTable(&m)
+		return m.updateTable(msg)
+
 	}
 
 	// handling widget-wide updates
@@ -42,9 +52,9 @@ func (m TuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case FcOnList:
 		m, cmd = m.updateList(msg)
 		cmds = append(cmds, cmd)
-    case FcOnCmdLine:
-        m, cmd = m.updateTextInput(msg)
-        cmds = append(cmds, cmd)
+	case FcOnCmdLine:
+		m, cmd = m.updateTextInput(msg)
+		cmds = append(cmds, cmd)
 	}
 
 	return m, tea.Batch(cmds...)
@@ -74,6 +84,10 @@ func (m TuiModel) View() string {
 
 }
 
-func InitTuiModel() *TuiModel {
-	return &TuiModel{FocusOn: FcOnTable}
+func InitTuiModel(tables *[]shdb.DBTableData) *TuiModel {
+    m := &TuiModel{FocusOn: FcOnTable, DBData: tables, TableID: 0}
+    m = InitTuiModelList(m)
+    m = InitTuiModelTable(m)
+    m = InitTuiModelTextInput(m)
+	return m
 }

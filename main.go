@@ -22,10 +22,10 @@ func main() {
     tables_data := shdb.GetDBData()
 
     // prepping TUI
-    m := tui.InitTuiModel()
-    m = tui.InitTuiModelList(m, tables_data)
-    m = tui.InitTuiModelTable(m, &(*tables_data)[1])
-    m = tui.InitTuiModelTextInput(m)
+    m := tui.InitTuiModel(tables_data)
+    //m = tui.InitTuiModelList(m, tables_data)
+    //m = tui.InitTuiModelTable(m, &(*tables_data)[1])
+    //m = tui.InitTuiModelTextInput(m)
 
     // launching TUI
     if _, err := tea.NewProgram(*m).Run(); err != nil {

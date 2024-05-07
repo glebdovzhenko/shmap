@@ -4,13 +4,23 @@ import (
 	"fmt"
     tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/bubbles/list"
-	shdb "github.com/glebdovzhenko/shmap/database"
 )
 
 func (m TuiModel) updateList(msg tea.Msg) (TuiModel, tea.Cmd) {
-    var cmd tea.Cmd
+	var cmds []tea.Cmd
+	var cmd tea.Cmd
+
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+        case "enter":
+            cmds = append(cmds, tea.Batch(emitSwitchTableMsg(m.List.Index())))
+		}
+	}
+
     m.List, cmd = m.List.Update(msg)	
-	return m, cmd
+    cmds = append(cmds, cmd)
+	return m, tea.Batch(cmds...)
 }
 
 type item struct {
@@ -21,10 +31,10 @@ func (i item) Title() string       { return i.title }
 func (i item) Description() string { return i.desc }
 func (i item) FilterValue() string { return i.title }
 
-func InitTuiModelList(md *TuiModel, tb *[]shdb.DBTableData) *TuiModel {
+func InitTuiModelList(md *TuiModel) *TuiModel {
 
-	items := make([]list.Item, len(*tb))
-	for ii, table := range *tb {
+	items := make([]list.Item, len(*md.DBData))
+	for ii, table := range *md.DBData {
 		items[ii] = list.Item(item{title: table.Name, desc: fmt.Sprintf("%d columns %d rows", len(*table.Rows), len(*table.ColumnNames))})
 	}
 

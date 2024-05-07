@@ -18,8 +18,11 @@
 - [ ] Fix that every time GetConfig() is called, the config file is loaded
 ## UI
 - [ ] Find a more compact list styling
+- [ ] Figure out how focusing works and use it instead of my own switch
 ## Functionality
-- [ ] Change table view on list selection + enter
+- [x] Change table view on list selection + enter
+- [ ] Better interface for DB representation! Less pointers.
 - [ ] Add logging
 ## Other
 - [ ] Refactor: move all widget styling from constructors to `styles.go`
+- [ ] Correct initialization with 0 tables
