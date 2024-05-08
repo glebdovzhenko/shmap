@@ -22,6 +22,8 @@ type ShmapCfg struct {
 	TUITable   TableCfg
 }
 
+var cfgWrapper * ShmapCfg
+
 // I follow the neovim rule here:
 // If $XDG_CONFIG_HOME is set, then it is a dir $XDG_CONFIG_HOME/shmap
 // and by default $HOME/.config/shmap
@@ -67,38 +69,48 @@ func defaultConfig() *ShmapCfg {
 	result.DBType = "sqlite3"
 	result.DBPath = filepath.Join(result.ConfigPath, "shmap.db")
 	result.TUITable.MaxColWidth = 20
-    result.TUITable.MaxTotalWidth = 100
+	result.TUITable.MaxTotalWidth = 100
 
 	return &result
 }
 
-func GetConfig() *ShmapCfg {
+func loadConfig() *ShmapCfg {
 	cfg := defaultConfig()
-    log.Printf("Loaded default config values...")
+	log.Printf("Loaded default config values...")
 
 	config_path := filepath.Join(cfg.ConfigPath, "shmap.toml")
 	if _, err := os.Stat(config_path); os.IsNotExist(err) {
-        log.Printf("File not found: %s", config_path)
-        log.Printf("Writing default values to %s", config_path)
+		log.Printf("File not found: %s", config_path)
+		log.Printf("Writing default values to %s", config_path)
 
 		b, _ := toml.Marshal(cfg)
 		os.WriteFile(config_path, b, 0o770)
 		return cfg
 	}
 
-    log.Printf("Loading configuration from: %s", config_path)
+	log.Printf("Loading configuration from: %s", config_path)
 	doc, err := os.ReadFile(config_path)
 	if err != nil {
-        log.Printf("Could not read file, using default configuration")
+		log.Printf("Could not read file, using default configuration")
 		return cfg
 	}
 
 	err = toml.Unmarshal([]byte(doc), cfg)
 	if err != nil {
-        log.Printf("Could not parse file, using default configuration")
+		log.Printf("Could not parse file, using default configuration")
 		return cfg
 	}
-    
-    log.Printf("Configuration loaded successfully")
+
+	log.Printf("Configuration loaded successfully")
 	return cfg
+}
+
+func GetConfig() *ShmapCfg {
+    // if cfgWrapper was not initialised, load file
+	if cfgWrapper == nil {
+		cfgWrapper = loadConfig()
+	}
+
+    // in any case just return the pointer
+    return cfgWrapper
 }

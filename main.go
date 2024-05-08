@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-    "os"
+	"log"
+	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/glebdovzhenko/shmap/config"
@@ -20,6 +21,8 @@ func main() {
         }
         defer f.Close()
     }
+    
+    log.Printf("Starting up SHMAP...")
 
 	// loading config
 	app_config := shcfg.GetConfig()

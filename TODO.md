@@ -16,7 +16,7 @@
 ## Optimization
 - [x] Better interface for DB representation! Less pointers.
 - [x] Figure out what should be passed by value and what by pointer in my database interface
-- [ ] Fix that every time GetConfig() is called, the config file is loaded
+- [x] Fix that every time GetConfig() is called, the config file is loaded
 ## UI
 - [x] Fix all columns width to content
 - [x] Add UI configuration parameters to TOML
