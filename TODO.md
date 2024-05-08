@@ -18,13 +18,17 @@
 - [x] Figure out what should be passed by value and what by pointer in my database interface
 - [ ] Fix that every time GetConfig() is called, the config file is loaded
 ## UI
+- [x] Fix all columns width to content
+- [x] Add UI configuration parameters to TOML
 - [ ] Find a more compact list styling
-- [ ] Fix all columns width to content
+- [ ] Figure out layout sizes and widths
 ## Functionality
 - [x] Change table view on list selection + enter
-- [ ] Figure out how focusing works and use it instead of my own switch
+- [ ] ~~Figure out how focusing works and use it instead of my own switch~~
+- - [ ] Not all `bubbles` implement `Focus()` / `Blur()`. What do?
 - [ ] Show in the list which table is currently selected
 - [ ] Add logging
+- [ ] On `enter` get the text from textbox
 ## Other
 - [ ] Refactor: move all widget styling from constructors to `styles.go`
 - [ ] Correct initialization with 0 tables
