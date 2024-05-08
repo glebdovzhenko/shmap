@@ -1,8 +1,7 @@
 package shcfg
 
 import (
-	//"fmt"
-	//"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -69,28 +68,37 @@ func defaultConfig() *ShmapCfg {
 	result.DBPath = filepath.Join(result.ConfigPath, "shmap.db")
 	result.TUITable.MaxColWidth = 20
     result.TUITable.MaxTotalWidth = 100
+
 	return &result
 }
 
 func GetConfig() *ShmapCfg {
 	cfg := defaultConfig()
+    log.Printf("Loaded default config values...")
 
 	config_path := filepath.Join(cfg.ConfigPath, "shmap.toml")
 	if _, err := os.Stat(config_path); os.IsNotExist(err) {
+        log.Printf("File not found: %s", config_path)
+        log.Printf("Writing default values to %s", config_path)
+
 		b, _ := toml.Marshal(cfg)
 		os.WriteFile(config_path, b, 0o770)
 		return cfg
 	}
 
+    log.Printf("Loading configuration from: %s", config_path)
 	doc, err := os.ReadFile(config_path)
 	if err != nil {
+        log.Printf("Could not read file, using default configuration")
 		return cfg
 	}
 
 	err = toml.Unmarshal([]byte(doc), cfg)
 	if err != nil {
+        log.Printf("Could not parse file, using default configuration")
 		return cfg
 	}
-
+    
+    log.Printf("Configuration loaded successfully")
 	return cfg
 }

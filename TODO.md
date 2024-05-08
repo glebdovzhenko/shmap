@@ -24,10 +24,11 @@
 - [ ] Figure out layout sizes and widths
 ## Functionality
 - [x] Change table view on list selection + enter
+- [x] Add logging
+- [ ] Add logging EVERYWHERE
 - [ ] ~~Figure out how focusing works and use it instead of my own switch~~
 - - [ ] Not all `bubbles` implement `Focus()` / `Blur()`. What do?
 - [ ] Show in the list which table is currently selected
-- [ ] Add logging
 - [ ] On `enter` get the text from textbox
 ## Other
 - [ ] Refactor: move all widget styling from constructors to `styles.go`
