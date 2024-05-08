@@ -1,4 +1,4 @@
-// shdb package provides an inteface for 
+// shdb package provides an inteface for
 // 1. Initializing a dummy database
 // 2. Reading from the database.
 package shdb
@@ -6,7 +6,7 @@ package shdb
 import (
 	"database/sql"
 	"fmt"
-    "os"
+	"os"
 
 	shcfg "github.com/glebdovzhenko/shmap/config"
 	_ "github.com/mattn/go-sqlite3"
@@ -66,7 +66,7 @@ func getTable(t_name string) (*[]string, *[][]string) {
 	return &column_names, &row_data
 }
 
-func getTablesNames() *[]string{
+func getTablesNames() *[]string {
 	app_cfg := shcfg.GetConfig()
 
 	// opening DB
@@ -90,13 +90,13 @@ func getTablesNames() *[]string{
 		tb_names = append(tb_names, *pt)
 	}
 
-    return &tb_names
+	return &tb_names
 }
 
 func setupDB() {
-    app_cfg := shcfg.GetConfig()
-    
-    if _, err := os.Stat(app_cfg.DBPath); os.IsNotExist(err) {
+	app_cfg := shcfg.GetConfig()
+
+	if _, err := os.Stat(app_cfg.DBPath); os.IsNotExist(err) {
 		defaultPopulate()
 	}
 
@@ -108,16 +108,3 @@ func setupDB() {
 }
 
 
-func GetDBData() *[]DBTableData {
-    setupDB()
-
-    tb_names := getTablesNames()
-    var result []DBTableData
-    
-    for _, tb_name := range *tb_names {
-        cs, rs := getTable(tb_name)
-        result = append(result, DBTableData{Name: tb_name, ColumnNames: cs, Rows: rs})
-    }
-
-    return &result
-}

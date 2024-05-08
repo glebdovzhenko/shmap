@@ -12,8 +12,8 @@ import (
 
 type TuiModel struct {
 	FocusOn FocusState
-	DBData  *[]shdb.DBTableData
-    TableID uint
+	DBData  *shdb.DBData
+    TableID int
 
 	Table     table.Model
 	List      list.Model
@@ -35,7 +35,7 @@ func (m TuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.FocusOn, _ = prevFocusState(m.FocusOn)
 		}
 	case SwitchTableMsg:
-        m.TableID = uint(msg)
+        m.TableID = int(msg)
         InitTuiModelTable(&m)
 		return m.updateTable(msg)
 
@@ -84,7 +84,7 @@ func (m TuiModel) View() string {
 
 }
 
-func InitTuiModel(tables *[]shdb.DBTableData) *TuiModel {
+func InitTuiModel(tables *shdb.DBData) *TuiModel {
     m := &TuiModel{FocusOn: FcOnTable, DBData: tables, TableID: 0}
     m = InitTuiModelList(m)
     m = InitTuiModelTable(m)

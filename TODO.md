@@ -14,9 +14,9 @@
 - - [x] Put configuration directory in $XDG_CONFIG_PATH / $HOME same as [NeoVIM](https://wiki.archlinux.org/title/Neovim#:~:text=%7C%7C%20fvimAUR-,Configuration,config%2Fnvim%2Finit.)
 - [x] Text edit should accept `q` button press and not quit
 ## Optimization
-- [ ] Figure out what should be passed by value and what by pointer in my database interface
+- [x] Better interface for DB representation! Less pointers.
+- [x] Figure out what should be passed by value and what by pointer in my database interface
 - [ ] Fix that every time GetConfig() is called, the config file is loaded
-- [ ] Better interface for DB representation! Less pointers.
 ## UI
 - [ ] Find a more compact list styling
 - [ ] Fix all columns width to content

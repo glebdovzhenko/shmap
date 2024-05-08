@@ -34,8 +34,18 @@ func (i item) FilterValue() string { return i.title }
 func InitTuiModelList(md *TuiModel) *TuiModel {
 
 	items := make([]list.Item, len(*md.DBData))
-	for ii, table := range *md.DBData {
-		items[ii] = list.Item(item{title: table.Name, desc: fmt.Sprintf("%d columns %d rows", len(*table.ColumnNames), len(*table.Rows))})
+    var(
+        title string
+        n_rows, n_cols int
+    )
+	for ii, _ := range items {
+        title, _ = md.DBData.Name(ii)
+        n_cols, _ = md.DBData.ColumnsLen(ii)
+        n_rows, _ = md.DBData.RowsLen(ii)
+		items[ii] = list.Item(item{
+            title: title, 
+            desc: fmt.Sprintf("%d columns %d rows", n_cols, n_rows),
+        })
 	}
 
 	md.List = list.New(items, list.NewDefaultDelegate(), 20, 20)

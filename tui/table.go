@@ -22,16 +22,35 @@ func (m TuiModel) updateTable(msg tea.Msg) (TuiModel, tea.Cmd) {
 }
 
 func InitTuiModelTable(md *TuiModel) *TuiModel {
+    
+    n_cols, _ := md.DBData.ColumnsLen(md.TableID)
+    n_rows, _ :=md.DBData.RowsLen(md.TableID)
 
-	var columns []table.Column
-	for _, cn := range *(*(*md).DBData)[(*md).TableID].ColumnNames {
-		columns = append(columns, table.Column{Title: cn, Width: 10})
-	}
+	var (
+        columns []table.Column
+        col_title string
+    )
+    for ii := 0; ii < n_cols; ii++ {
+        col_title, _ = md.DBData.ColumnName(md.TableID, ii)
+        columns = append(columns, table.Column{Title: col_title, Width: 10})
+    }
 
-	var rows []table.Row
-	for ii, _ := range *(*(*md).DBData)[(*md).TableID].Rows {
-        rows = append(rows, (*(*(*md).DBData)[(*md).TableID].Rows)[ii])
-	}
+	//for _, cn := range *(*(*md).DBData)[(*md).TableID].ColumnNames {
+	//    columns = append(columns, table.Column{Title: cn, Width: 10})
+	//}
+
+	var (
+        rows []table.Row
+        row_ptr *[]string
+    )
+
+    for ii := 0; ii < n_rows; ii++ {
+        row_ptr, _ = md.DBData.RowPtr(md.TableID, ii)
+        rows = append(rows, *row_ptr)
+    }
+	//for ii, _ := range *(*(*md).DBData)[(*md).TableID].Rows {
+    //    rows = append(rows, (*(*(*md).DBData)[(*md).TableID].Rows)[ii])
+	//}
 
 	t := table.New(
 		table.WithColumns(columns),
