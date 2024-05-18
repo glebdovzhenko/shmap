@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	shdb "github.com/glebdovzhenko/shmap/database"
+	"log"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -13,7 +14,7 @@ import (
 type TuiModel struct {
 	FocusOn FocusState
 	DBData  *shdb.DBData
-    TableID int
+	TableID int
 
 	Table     table.Model
 	List      list.Model
@@ -28,17 +29,24 @@ func (m TuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c":
+			log.Printf("TuiModel.Update received ctrl+c")
 			return m, tea.Quit
 		case "tab":
+			log.Printf("TuiModel.Update received tab")
 			m.FocusOn, _ = nextFocusState(m.FocusOn)
 		case "shift+tab":
+			log.Printf("TuiModel.Update received shift+tab")
 			m.FocusOn, _ = prevFocusState(m.FocusOn)
 		}
 	case SwitchTableMsg:
-        m.TableID = int(msg)
-        InitTuiModelTable(&m)
-		return m.updateTable(msg)
+		log.Printf("TuiModel.Update received SwitchTableMsg: %d", msg)
 
+		m.TableID = int(msg)
+		InitTuiModelTable(&m)
+		return m.updateTable(msg)
+	case TextSubmitMsg:
+		log.Printf("TuiModel.Update received TextSubmitMsg: \"%s\"", msg)
+		return m, nil
 	}
 
 	// handling widget-wide updates
@@ -85,9 +93,9 @@ func (m TuiModel) View() string {
 }
 
 func InitTuiModel(tables *shdb.DBData) *TuiModel {
-    m := &TuiModel{FocusOn: FcOnTable, DBData: tables, TableID: 0}
-    m = InitTuiModelList(m)
-    m = InitTuiModelTable(m)
-    m = InitTuiModelTextInput(m)
+	m := &TuiModel{FocusOn: FcOnTable, DBData: tables, TableID: 0}
+	m = InitTuiModelList(m)
+	m = InitTuiModelTable(m)
+	m = InitTuiModelTextInput(m)
 	return m
 }

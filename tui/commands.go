@@ -11,3 +11,11 @@ func emitSwitchTableMsg(tb_id int) tea.Cmd {
 		return SwitchTableMsg(tb_id)
 	}
 }
+
+type TextSubmitMsg string
+
+func emitTextSubmitMsg(data string) tea.Cmd {
+	return func() tea.Msg {
+		return TextSubmitMsg(data)
+	}
+}
