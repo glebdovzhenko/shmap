@@ -27,12 +27,13 @@
 - [x] Add logging
 - [x] On `enter` get the text from textbox
 - [x] Add logging to TuiModel.Update()
-- [ ] On `enter` make the template substitution for the textbox string 
+- [ ] ~~On `enter` make the template substitution for the textbox string~~
+- - [x] On `enter` make a new view that shows entered text 
 - [ ] Build bash AST for the textbox text for syntax highlighting later on
 - [ ] Add logging EVERYWHERE
 - [ ] ~~Figure out how focusing works and use it instead of my own switch~~
 - - [ ] Not all `bubbles` implement `Focus()` / `Blur()`. What do?
-- [ ] Show in the list which table is currently selected
+- [x] Show in the list which table is currently selected
 ## Other
 - [ ] Refactor: move all widget styling from constructors to `styles.go`
 - [ ] Correct initialization with 0 tables
