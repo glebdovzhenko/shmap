@@ -4,6 +4,16 @@ import 	(
 	tea "github.com/charmbracelet/bubbletea"
 
 )
+
+type OutputScreenModel struct {
+	CmdOutput []string
+}
+
+func InitOutputScreenModel() *OutputScreenModel {
+    m:= &OutputScreenModel{CmdOutput: []string{"", "", ""}}
+    return m
+}
+
 func (m TuiModel) updateOutputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
     switch msg := msg.(type) {
     case tea.KeyMsg:
@@ -16,10 +26,8 @@ func (m TuiModel) updateOutputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-
 func (m TuiModel) viewOutputScreen() string {
-    result := lipgloss.JoinHorizontal(lipgloss.Center, m.CmdOutput...)
+    result := lipgloss.JoinHorizontal(lipgloss.Center, m.OutputScreen.CmdOutput...)
 	return result
 }
-
 

@@ -8,9 +8,67 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	shcfg "github.com/glebdovzhenko/shmap/config"
+    shdb "github.com/glebdovzhenko/shmap/database"
 	"log"
 )
 
+type FocusState uint
+
+const (
+	FcOnTable   FocusState = iota
+	FcOnCmdLine FocusState = iota
+	FcOnList    FocusState = iota
+)
+
+func (fs FocusState) next() (FocusState, error) {
+	switch fs {
+	case FcOnTable:
+		return FcOnCmdLine, nil
+	case FcOnCmdLine:
+		return FcOnList, nil
+	case FcOnList:
+		return FcOnTable, nil
+	default:
+		return fs, fmt.Errorf("FocusState has unknown value %d", fs)
+	}
+}
+
+func (fs FocusState) prev() (FocusState, error) {
+	switch fs {
+	case FcOnTable:
+		return FcOnList, nil
+	case FcOnCmdLine:
+		return FcOnTable, nil
+	case FcOnList:
+		return FcOnCmdLine, nil
+	default:
+		return fs, fmt.Errorf("FocusState has unknown value %d", fs)
+	}
+}
+
+type InputScreenModel struct {
+	// data
+	FocusOn FocusState
+	DBData  *shdb.DBData
+	TableID int
+
+	//tea models
+	Table     table.Model
+	List      list.Model
+	TextInput textinput.Model
+}
+
+func InitInputScreenModel(tables *shdb.DBData) *InputScreenModel {
+	m := &InputScreenModel{
+		FocusOn:   FcOnTable,
+		DBData:    tables,
+		TableID:   0,
+	}
+	m = InitTuiModelList(m)
+	m = InitTuiModelTable(m)
+	m = InitTuiModelTextInput(m)
+	return m
+}
 
 func (m TuiModel) updateInputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -18,22 +76,22 @@ func (m TuiModel) updateInputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "tab":
 			log.Printf("TuiModel.Update received tab")
-			m.FocusOn, _ = m.FocusOn.next()
+			m.InputScreen.FocusOn, _ = m.InputScreen.FocusOn.next()
 		case "shift+tab":
 			log.Printf("TuiModel.Update received shift+tab")
-			m.FocusOn, _ = m.FocusOn.prev()
+			m.InputScreen.FocusOn, _ = m.InputScreen.FocusOn.prev()
 		}
 	case SwitchTableMsg:
 		log.Printf("TuiModel.Update received SwitchTableMsg: %d", msg)
 
-		m.TableID = int(msg)
-		InitTuiModelTable(&m)
+		m.InputScreen.TableID = int(msg)
+		InitTuiModelTable(&m.InputScreen)
 		return m.updateTable(msg)
 	case TextSubmitMsg:
 		log.Printf("TuiModel.Update received TextSubmitMsg: \"%s\"", msg)
 		return m, runWorkerCmd(string(msg))
     case WorkerResultMsg:
-        m.CmdOutput[0] = string(msg)
+        m.OutputScreen.CmdOutput[0] = string(msg)
         m.Screen = OutputScreen
         return m, nil
 	}
@@ -42,7 +100,7 @@ func (m TuiModel) updateInputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
 
-	switch m.FocusOn {
+	switch m.InputScreen.FocusOn {
 	case FcOnTable:
 		m, cmd = m.updateTable(msg)
 		cmds = append(cmds, cmd)
@@ -61,17 +119,17 @@ func (m TuiModel) updateInputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m TuiModel) viewInputScreen() string {
 
-	tb_rendered := tableStyle.Render(m.Table.View())
-	lst_rendered := listStyle.Render(m.List.View())
-	cmd_rendered := cmdStyle.Render(m.TextInput.View())
+	tb_rendered := tableStyle.Render(m.InputScreen.Table.View())
+	lst_rendered := listStyle.Render(m.InputScreen.List.View())
+	cmd_rendered := cmdStyle.Render(m.InputScreen.TextInput.View())
 
-	switch m.FocusOn {
+	switch m.InputScreen.FocusOn {
 	case FcOnList:
-		lst_rendered = listStyleActive.Render(m.List.View())
+		lst_rendered = listStyleActive.Render(m.InputScreen.List.View())
 	case FcOnTable:
-		tb_rendered = tableStyleActive.Render(m.Table.View())
+		tb_rendered = tableStyleActive.Render(m.InputScreen.Table.View())
 	case FcOnCmdLine:
-		cmd_rendered = cmdStyleActive.Render(m.TextInput.View())
+		cmd_rendered = cmdStyleActive.Render(m.InputScreen.TextInput.View())
 	default:
 		panic("")
 	}
@@ -85,12 +143,12 @@ func (m TuiModel) viewInputScreen() string {
 
 func (m TuiModel) updateTable(msg tea.Msg) (TuiModel, tea.Cmd) {
 	var cmd tea.Cmd
-	m.Table, cmd = m.Table.Update(msg)
+	m.InputScreen.Table, cmd = m.InputScreen.Table.Update(msg)
 	return m, cmd
 }
 
 
-func InitTuiModelTable(md *TuiModel) *TuiModel {
+func InitTuiModelTable(md *InputScreenModel) *InputScreenModel {
 	app_cfg := shcfg.GetConfig()
 
 	// getting the number of rows and columns in our table
@@ -179,11 +237,11 @@ func (m TuiModel) updateList(msg tea.Msg) (TuiModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			cmds = append(cmds, tea.Batch(emitSwitchTableMsg(m.List.Index())))
+			cmds = append(cmds, tea.Batch(emitSwitchTableMsg(m.InputScreen.List.Index())))
 		}
 	}
 
-	m.List, cmd = m.List.Update(msg)
+	m.InputScreen.List, cmd = m.InputScreen.List.Update(msg)
 	cmds = append(cmds, cmd)
 	return m, tea.Batch(cmds...)
 }
@@ -198,7 +256,7 @@ func (i item) Title() string       { return i.title }
 func (i item) Description() string { return i.desc }
 func (i item) FilterValue() string { return i.title }
 
-func InitTuiModelList(md *TuiModel) *TuiModel {
+func InitTuiModelList(md *InputScreenModel) *InputScreenModel {
 
 	items := make([]list.Item, len(*md.DBData))
 	var (
@@ -231,17 +289,17 @@ func (m TuiModel) updateTextInput(msg tea.Msg) (TuiModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			cmds = append(cmds, tea.Batch(emitTextSubmitMsg(m.TextInput.Value())))
+			cmds = append(cmds, tea.Batch(emitTextSubmitMsg(m.InputScreen.TextInput.Value())))
 		}
 	}
 
-	m.TextInput, cmd = m.TextInput.Update(msg)
+	m.InputScreen.TextInput, cmd = m.InputScreen.TextInput.Update(msg)
 	cmds = append(cmds, cmd)
 	return m, tea.Batch(cmds...)
 }
 
 
-func InitTuiModelTextInput(md *TuiModel) *TuiModel {
+func InitTuiModelTextInput(md *InputScreenModel) *InputScreenModel {
 	md.TextInput = textinput.New()
 	md.TextInput.Placeholder = "echo {{name}}"
 	md.TextInput.Focus()
