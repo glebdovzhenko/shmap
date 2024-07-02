@@ -1,4 +1,4 @@
-package tui
+package shcmd
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
@@ -7,7 +7,7 @@ import (
 
 type SwitchTableMsg int
 
-func emitSwitchTableMsg(tb_id int) tea.Cmd {
+func EmitSwitchTableMsg(tb_id int) tea.Cmd {
 	return func() tea.Msg {
 		return SwitchTableMsg(tb_id)
 	}
@@ -15,7 +15,7 @@ func emitSwitchTableMsg(tb_id int) tea.Cmd {
 
 type TextSubmitMsg string
 
-func emitTextSubmitMsg(data string) tea.Cmd {
+func EmitTextSubmitMsg(data string) tea.Cmd {
 	return func() tea.Msg {
 		return TextSubmitMsg(data)
 	}
@@ -23,7 +23,7 @@ func emitTextSubmitMsg(data string) tea.Cmd {
 
 type WorkerResultMsg string
 
-func runWorkerCmd(input string) (output tea.Cmd) {
+func RunWorkerCmd(input string) (output tea.Cmd) {
 	return func() tea.Msg {
 		time.Sleep(100 * time.Millisecond)
 		return WorkerResultMsg(input)

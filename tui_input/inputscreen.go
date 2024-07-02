@@ -1,4 +1,4 @@
-package tui
+package tui_input
 
 import (
 	"fmt"
@@ -9,7 +9,44 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	shcfg "github.com/glebdovzhenko/shmap/config"
     shdb "github.com/glebdovzhenko/shmap/database"
+    shcmd "github.com/glebdovzhenko/shmap/tui_cmds"
 	"log"
+)
+
+var (
+	tableStyle = lipgloss.NewStyle().
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("240")).
+            Height(10).
+            Width(60)
+	listStyle = lipgloss.NewStyle().
+			BorderStyle(lipgloss.NormalBorder()).
+            BorderForeground(lipgloss.Color("240")).
+			Margin(1, 2).
+            Height(20).
+            Width(20)
+	cmdStyle = lipgloss.NewStyle().
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("240")).
+            Height(5).
+            Width(80)
+
+	tableStyleActive = lipgloss.NewStyle().
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("69")).
+            Height(10).
+            Width(60)
+	listStyleActive = lipgloss.NewStyle().
+			BorderStyle(lipgloss.NormalBorder()).
+            BorderForeground(lipgloss.Color("69")).
+			Margin(1, 2).
+            Height(20).
+            Width(20)
+	cmdStyleActive = lipgloss.NewStyle().
+			BorderStyle(lipgloss.NormalBorder()).
+			BorderForeground(lipgloss.Color("69")).
+            Height(5).
+            Width(80)
 )
 
 type FocusState uint
@@ -81,7 +118,7 @@ func (m InputScreenModel) Update(msg tea.Msg) (InputScreenModel, tea.Cmd) {
 			log.Printf("TuiModel.Update received shift+tab")
 			m.FocusOn, _ = m.FocusOn.prev()
 		}
-	case SwitchTableMsg:
+	case shcmd.SwitchTableMsg:
 		log.Printf("TuiModel.Update received SwitchTableMsg: %d", msg)
 
 		m.TableID = int(msg)
@@ -89,9 +126,9 @@ func (m InputScreenModel) Update(msg tea.Msg) (InputScreenModel, tea.Cmd) {
         var cmd tea.Cmd
         m, cmd = m.updateTable(msg)
 		return m, cmd
-	case TextSubmitMsg:
+	case shcmd.TextSubmitMsg:
 		log.Printf("TuiModel.Update received TextSubmitMsg: \"%s\"", msg)
-		return m, runWorkerCmd(string(msg))
+		return m, shcmd.RunWorkerCmd(string(msg))
 	}
 
 	// handling widget-wide updates
@@ -235,7 +272,7 @@ func (m InputScreenModel) updateList(msg tea.Msg) (InputScreenModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			cmds = append(cmds, tea.Batch(emitSwitchTableMsg(m.List.Index())))
+			cmds = append(cmds, tea.Batch(shcmd.EmitSwitchTableMsg(m.List.Index())))
 		}
 	}
 
@@ -287,7 +324,7 @@ func (m InputScreenModel) updateTextInput(msg tea.Msg) (InputScreenModel, tea.Cm
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			cmds = append(cmds, tea.Batch(emitTextSubmitMsg(m.TextInput.Value())))
+			cmds = append(cmds, tea.Batch(shcmd.EmitTextSubmitMsg(m.TextInput.Value())))
 		}
 	}
 

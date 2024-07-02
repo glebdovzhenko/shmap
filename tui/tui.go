@@ -7,6 +7,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	shdb "github.com/glebdovzhenko/shmap/database"
+	shcmd "github.com/glebdovzhenko/shmap/tui_cmds"
+	shin "github.com/glebdovzhenko/shmap/tui_input"
+    shou "github.com/glebdovzhenko/shmap/tui_output"
+
 )
 
 type ScreenState uint
@@ -19,15 +23,15 @@ const (
 type TuiModel struct {
 	// data
 	Screen       ScreenState
-	InputScreen  InputScreenModel
-	OutputScreen OutputScreenModel
+	InputScreen  shin.InputScreenModel
+	OutputScreen shou.OutputScreenModel
 }
 
 func InitTuiModel(tables *shdb.DBData) *TuiModel {
 	m := &TuiModel{
 		Screen:       InputScreen,
-		InputScreen:  *InitInputScreenModel(tables),
-		OutputScreen: *InitOutputScreenModel(),
+		InputScreen:  *shin.InitInputScreenModel(tables),
+		OutputScreen: *shou.InitOutputScreenModel(),
 	}
 	return m
 }
@@ -48,7 +52,7 @@ func (m TuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 		}
-	case WorkerResultMsg:
+	case shcmd.WorkerResultMsg:
 		m.OutputScreen.CmdOutput[0] = string(msg)
 		m.Screen = OutputScreen
 		return m, nil
@@ -56,12 +60,12 @@ func (m TuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch m.Screen {
 	case InputScreen:
-        var cmd tea.Cmd
+		var cmd tea.Cmd
 		m.InputScreen, cmd = m.InputScreen.Update(msg)
-        return m, cmd
+		return m, cmd
 	case OutputScreen:
-        var cmd tea.Cmd
-        m.OutputScreen, cmd = m.OutputScreen.Update(msg)
+		var cmd tea.Cmd
+		m.OutputScreen, cmd = m.OutputScreen.Update(msg)
 		return m, cmd
 	default:
 		panic("")
