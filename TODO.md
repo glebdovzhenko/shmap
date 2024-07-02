@@ -29,6 +29,7 @@
 - [x] Add logging to TuiModel.Update()
 - [ ] ~~On `enter` make the template substitution for the textbox string~~
 - - [x] On `enter` make a new view that shows entered text 
+- [ ] Launch concurrent execution of the entered command.
 - [ ] Build bash AST for the textbox text for syntax highlighting later on
 - [ ] Add logging EVERYWHERE
 - [ ] ~~Figure out how focusing works and use it instead of my own switch~~

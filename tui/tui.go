@@ -52,6 +52,10 @@ func (m TuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 		}
+	case shcmd.TextSubmitMsg:
+		log.Printf("TuiModel.Update received TextSubmitMsg: \"%s\"", msg)
+        
+		return m, shcmd.RunWorkerCmd(string(msg))
 	case shcmd.WorkerResultMsg:
 		m.OutputScreen.CmdOutput[0] = string(msg)
 		m.Screen = OutputScreen
