@@ -1,8 +1,8 @@
 package tui
-import 	(
-    "github.com/charmbracelet/lipgloss"
-	tea "github.com/charmbracelet/bubbletea"
 
+import (
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type OutputScreenModel struct {
@@ -10,24 +10,15 @@ type OutputScreenModel struct {
 }
 
 func InitOutputScreenModel() *OutputScreenModel {
-    m:= &OutputScreenModel{CmdOutput: []string{"", "", ""}}
-    return m
+	m := &OutputScreenModel{CmdOutput: []string{"", "", ""}}
+	return m
 }
 
-func (m TuiModel) updateOutputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
-    switch msg := msg.(type) {
-    case tea.KeyMsg:
-        switch msg.String(){
-        case "enter":
-            m.Screen = InputScreen
-            return m, nil
-        }
-    }
-	return m, nil
-}
+func (m OutputScreenModel) Init() tea.Cmd { return nil }
 
-func (m TuiModel) viewOutputScreen() string {
-    result := lipgloss.JoinHorizontal(lipgloss.Center, m.OutputScreen.CmdOutput...)
+func (m OutputScreenModel) Update(msg tea.Msg) (OutputScreenModel, tea.Cmd) { return m, nil }
+
+func (m OutputScreenModel) View() string {
+	result := lipgloss.JoinHorizontal(lipgloss.Center, m.CmdOutput...)
 	return result
 }
-

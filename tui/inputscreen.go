@@ -70,37 +70,35 @@ func InitInputScreenModel(tables *shdb.DBData) *InputScreenModel {
 	return m
 }
 
-func (m TuiModel) updateInputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m InputScreenModel) Update(msg tea.Msg) (InputScreenModel, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "tab":
 			log.Printf("TuiModel.Update received tab")
-			m.InputScreen.FocusOn, _ = m.InputScreen.FocusOn.next()
+			m.FocusOn, _ = m.FocusOn.next()
 		case "shift+tab":
 			log.Printf("TuiModel.Update received shift+tab")
-			m.InputScreen.FocusOn, _ = m.InputScreen.FocusOn.prev()
+			m.FocusOn, _ = m.FocusOn.prev()
 		}
 	case SwitchTableMsg:
 		log.Printf("TuiModel.Update received SwitchTableMsg: %d", msg)
 
-		m.InputScreen.TableID = int(msg)
-		InitTuiModelTable(&m.InputScreen)
-		return m.updateTable(msg)
+		m.TableID = int(msg)
+		InitTuiModelTable(&m)
+        var cmd tea.Cmd
+        m, cmd = m.updateTable(msg)
+		return m, cmd
 	case TextSubmitMsg:
 		log.Printf("TuiModel.Update received TextSubmitMsg: \"%s\"", msg)
 		return m, runWorkerCmd(string(msg))
-    case WorkerResultMsg:
-        m.OutputScreen.CmdOutput[0] = string(msg)
-        m.Screen = OutputScreen
-        return m, nil
 	}
 
 	// handling widget-wide updates
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
 
-	switch m.InputScreen.FocusOn {
+	switch m.FocusOn {
 	case FcOnTable:
 		m, cmd = m.updateTable(msg)
 		cmds = append(cmds, cmd)
@@ -117,19 +115,19 @@ func (m TuiModel) updateInputScreen(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 
-func (m TuiModel) viewInputScreen() string {
+func (m InputScreenModel) View() string {
 
-	tb_rendered := tableStyle.Render(m.InputScreen.Table.View())
-	lst_rendered := listStyle.Render(m.InputScreen.List.View())
-	cmd_rendered := cmdStyle.Render(m.InputScreen.TextInput.View())
+	tb_rendered := tableStyle.Render(m.Table.View())
+	lst_rendered := listStyle.Render(m.List.View())
+	cmd_rendered := cmdStyle.Render(m.TextInput.View())
 
-	switch m.InputScreen.FocusOn {
+	switch m.FocusOn {
 	case FcOnList:
-		lst_rendered = listStyleActive.Render(m.InputScreen.List.View())
+		lst_rendered = listStyleActive.Render(m.List.View())
 	case FcOnTable:
-		tb_rendered = tableStyleActive.Render(m.InputScreen.Table.View())
+		tb_rendered = tableStyleActive.Render(m.Table.View())
 	case FcOnCmdLine:
-		cmd_rendered = cmdStyleActive.Render(m.InputScreen.TextInput.View())
+		cmd_rendered = cmdStyleActive.Render(m.TextInput.View())
 	default:
 		panic("")
 	}
@@ -141,9 +139,9 @@ func (m TuiModel) viewInputScreen() string {
 }
 
 
-func (m TuiModel) updateTable(msg tea.Msg) (TuiModel, tea.Cmd) {
+func (m InputScreenModel) updateTable(msg tea.Msg) (InputScreenModel, tea.Cmd) {
 	var cmd tea.Cmd
-	m.InputScreen.Table, cmd = m.InputScreen.Table.Update(msg)
+	m.Table, cmd = m.Table.Update(msg)
 	return m, cmd
 }
 
@@ -229,7 +227,7 @@ func InitTuiModelTable(md *InputScreenModel) *InputScreenModel {
 }
 
 
-func (m TuiModel) updateList(msg tea.Msg) (TuiModel, tea.Cmd) {
+func (m InputScreenModel) updateList(msg tea.Msg) (InputScreenModel, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
 
@@ -237,11 +235,11 @@ func (m TuiModel) updateList(msg tea.Msg) (TuiModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			cmds = append(cmds, tea.Batch(emitSwitchTableMsg(m.InputScreen.List.Index())))
+			cmds = append(cmds, tea.Batch(emitSwitchTableMsg(m.List.Index())))
 		}
 	}
 
-	m.InputScreen.List, cmd = m.InputScreen.List.Update(msg)
+	m.List, cmd = m.List.Update(msg)
 	cmds = append(cmds, cmd)
 	return m, tea.Batch(cmds...)
 }
@@ -281,7 +279,7 @@ func InitTuiModelList(md *InputScreenModel) *InputScreenModel {
 }
 
 
-func (m TuiModel) updateTextInput(msg tea.Msg) (TuiModel, tea.Cmd) {
+func (m InputScreenModel) updateTextInput(msg tea.Msg) (InputScreenModel, tea.Cmd) {
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
 
@@ -289,11 +287,11 @@ func (m TuiModel) updateTextInput(msg tea.Msg) (TuiModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			cmds = append(cmds, tea.Batch(emitTextSubmitMsg(m.InputScreen.TextInput.Value())))
+			cmds = append(cmds, tea.Batch(emitTextSubmitMsg(m.TextInput.Value())))
 		}
 	}
 
-	m.InputScreen.TextInput, cmd = m.InputScreen.TextInput.Update(msg)
+	m.TextInput, cmd = m.TextInput.Update(msg)
 	cmds = append(cmds, cmd)
 	return m, tea.Batch(cmds...)
 }
